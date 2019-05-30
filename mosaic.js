@@ -8,19 +8,17 @@
         textColor: 'black',
     }, options);
  
-    function mainObject(ulContainer, settings){
-        this.ulContainer = ulContainer;
-        this.liImg = this.ulContainer.find('li');
-        this.image = this.ulContainer.find('img');
-        this.liQuantity = this.liImg.length;
+    function mainObject(mainContainer, settings){
+        this.mainContainer = mainContainer;
+        this.liImg = this.mainContainer.find('li');
+        this.image = this.mainContainer.find('img');
         this.settings = settings;
 
         mainObject.prototype.init = function (){
             var that = this;
-            
 
             $(window).on('resize load', function(){
-                that.calculation(that.ulContainer.width() < that.settings.imagesWidth*2);
+                that.calculation(that.mainContainer.width() < that.settings.imagesWidth*2);
             });
 
             this.image.each(function() {
@@ -32,58 +30,75 @@
 
         mainObject.prototype.calculation = function (single){
             var that = this;
+            that.array_of_heights = [];
 
-            that.current_column_high = 0;
+            that.itemWidth = that.settings.imagesWidth + that.settings.imegesGap;
+            that.columns = Math.floor(that.mainContainer.width()/that.itemWidth);
+            that.mainContainer.css('width',that.mainContainer.parent().width());
+            that.current_image_high = 0;
             that.current_column = 0;
             that.lowest_column = 0;
             that.columnHeight = 0;
+            that.chunk = [];
+ 
 
-            that.quantity = that.settings.imagesWidth+that.settings.imegesGap;
-            that.columns = Math.floor(that.ulContainer.width()/that.quantity);
-            that.ulContainer.css('width',that.ulContainer.parent().width());
+        that.liImg.each(function(index){              
+ 
+            that.top = 0;
 
-            that.liImg.each(function(index){              
-                
-                that.current_column = index % that.columns; 
-                that.top = 0;
+            if(single) {
+                that.current_column = 0;
+                that.left = that.settings.imegesGap;
+            } else {
+                that.current_column = that.lowest_column;
+                that.left = that.itemWidth*that.current_column;
+            };
 
-                if(single) {
-                    that.current_column = 0;
-                    that.left = that.settings.imegesGap;
-                } else {
-                    that.current_column = index % that.columns;
-                    that.left = (that.settings.imagesWidth + that.settings.imegesGap)*that.current_column;
-                };
+            for(var rm = 0; rm < that.columns; rm++) {
+                $(this).removeClass('column' + rm);
+            };
 
-                for(var rm = 0; rm < that.columns; rm++) {
-                    $(this).removeClass('column' + rm);
-                };       
-                
-                $(this).addClass('column' + that.current_column);
+            $(this).addClass('column' + that.current_column);
 
-                $(this).css({
-                    'width': that.settings.imagesWidth,
-                    'position': 'absolute',
-                    'left': that.left,
-                });
-                
-                $(this).prevAll().each(function(index) {
-                    if($(this).hasClass('column' + that.current_column)) {
-                    
-                    that.current_column_high = Math.ceil($(this).outerHeight() + that.settings.imegesGap);
-                    that.top += that.current_column_high;
-                        
-                    };
+            $(this).css({
+                'width': that.settings.imagesWidth,
+                'position': 'absolute',
+                'left': that.left,
+            });      
 
-                    if((that.current_column+1) % that.columns === 0,that.current_column){
-                        that.lowest_column = that.top;
-                        console.log( that.lowest_column ,that.top,that.current_column_high);  
-                    }                   
-                });
+            that.current_image_high = Math.ceil($(this).height() + that.settings.imegesGap);
 
-                $(this).css('top',that.top);
-            });
+            console.log(that.top);
+
+            if(that.array_of_heights.length >= that.columns){
+                that.array_of_heights[that.lowest_column] += that.current_image_high;
+            } else {
+                that.array_of_heights.push(that.current_image_high);
+            };
+            
+            console.log(that.array_of_heights)
+            
+            that.lowest_column = that.array_of_heights.indexOf(Math.min.apply(Math,that.array_of_heights));         
+            that.top = that.array_of_heights[that.lowest_column];
+
+            console.log(that.top)
+
+            $(this).css('top',that.top);
+    });
+
+};
+
+
+        mainObject.prototype.chunkArray = function (myArray, chunk_size){
+            this.results = [];
+            
+            while (myArray.length) {
+                this.results.push(myArray.splice(0, chunk_size));
+            };
+
+            return this.results;
         };
+
 
         mainObject.prototype.hoverEffect = function (){
             if(this.settings.hoverTitle){
@@ -110,8 +125,8 @@
 
 
     return this.each(function() {
-        var ulContainer = $(this);
-        var start = new mainObject(ulContainer, settings);
+        var mainContainer = $(this);
+        var start = new mainObject(mainContainer, settings);
         start.init();
         return this;
     });
@@ -148,17 +163,3 @@ $(document).ready(function(){
     //     imegesGap: 10,
     //     hoverTitle: false,
     // }); 
-
-
-
-// if (that.top >= that.current_column_high){
-//     that.current_column_high += $(this).outerHeight() + that.settings.imegesGap;
-//     that.ulContainer.css('height', that.current_column_high);
-// };
-
-
-// $(this).prevAll().each(function(index) {
-//     if($(this).hasClass('column' + that.current_column)) {
-//         that.top += $(this).outerHeight() + that.settings.imegesGap;
-//     };
-// });
