@@ -1,5 +1,4 @@
 body {
-    background: grey;
     font-family: 'proxima-nova',sans-serif;  
     text-align: center;
     margin: 0; 
@@ -18,7 +17,7 @@ ul li{
     padding: 0;
 }
 
-ul li img{
+ul li img,ul li video {
     float: left;
     transition: .8s opacity;
     width: 100%;
