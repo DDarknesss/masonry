@@ -31,7 +31,7 @@
                 this.fontSize = 11;
             } else {
                 this.fontSize = this.settings.itemWidth*0.05;
-            };
+            }
 
             if(this.settings.hoverTitle){
                 this.image
@@ -44,7 +44,7 @@
                         $(this).css({'opacity': 0.3,'transition': '.5s ease'});
                         $('<div class="text">'+this.text+'</div>').insertAfter(this);
                     });
-                };
+                }
         };
 
         mainObject.prototype.calculation = function (){
@@ -63,7 +63,7 @@
 
                 for( var rm = 0; rm < that.cls; rm++ ) {
                     $(this).removeClass('cl' + rm);
-                };
+                }
 
                 $(this)
                     .addClass('cl' + that.lowest_cl)
@@ -78,7 +78,7 @@
                 
                 if( that.arr_of_heights.length >= that.cls ){
                     that.arr_of_heights[that.lowest_cl] += that.current_image_high;
-                };
+                }
                 
                 that.lowest_cl = that.arr_of_heights.indexOf(Math.min.apply(Math,that.arr_of_heights));    
                 
@@ -89,7 +89,7 @@
                 });
             });
         };
-    };
+    }
 
 
     return this.each(function() {
